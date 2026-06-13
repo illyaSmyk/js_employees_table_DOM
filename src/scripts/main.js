@@ -1,10 +1,20 @@
 'use strict';
 
 const form = document.createElement('form');
-const tbody = document.querySelector('tbody');
 
 form.className = 'new-employee-form';
 document.body.append(form);
+
+const tbody = document.querySelector('tbody');
+const buttonText = 'Save to table';
+
+const labels = {
+  name: 'Name:',
+  position: 'Position:',
+  office: 'Office:',
+  age: 'Age:',
+  salary: 'Salary:',
+};
 
 const inputs = ['name', 'position', 'office', 'age', 'salary'];
 
@@ -57,7 +67,7 @@ function createField() {
     if (input !== 'office') {
       inputfield.name = `${input}`;
       inputfield.dataset.qa = `${input}`;
-      label.textContent = `${inputfield.name[0].toUpperCase() + inputfield.name.slice(1)}:`;
+      label.textContent = labels[input];
       label.append(inputfield);
       form.append(label);
     } else {
@@ -82,7 +92,7 @@ createField();
 
 const button = document.createElement('button');
 
-button.textContent = 'Save to table';
+button.textContent = buttonText;
 form.append(button);
 
 const formValues = {};
@@ -96,19 +106,19 @@ button.addEventListener('click', (e) => {
   formValues.salary = form.querySelector('[data-qa="salary"]').value;
 
   if (Object.values(formValues).includes('')) {
-    pushNotification('Error!', 'All dates must be added!', 'error');
+    pushNotification('Error!', 'All fields are required!', 'error');
 
     return;
   }
 
   if (formValues.name.length < 4) {
-    pushNotification('Error!', 'Name must have more 4 letters!', 'error');
+    pushNotification('Error!', 'Name must contain at least 4 letters', 'error');
 
     return;
   }
 
   if (formValues.age < 18 || formValues.age > 90) {
-    pushNotification('Error!', 'Incorrect age!', 'error');
+    pushNotification('Error!', 'Age must be between 18 and 90!', 'error');
 
     return;
   }
@@ -126,7 +136,7 @@ button.addEventListener('click', (e) => {
     tr.append(td);
   }
 
-  pushNotification('Success!', 'Dates successfully added!', 'success');
+  pushNotification('Success!', 'Employee successfully added!', 'success');
 
   tbody.append(tr);
   form.reset();
@@ -138,8 +148,9 @@ let currentColumn = null;
 
 function getCellValue(row, index) {
   const value = row.cells[index].textContent;
+  const headerText = headers[index].textContent.toLowerCase();
 
-  if (index === 3 || index === 4) {
+  if (headerText === 'age' || headerText === 'salary') {
     return Number(value.replaceAll('$', '').replaceAll(',', ''));
   }
 
