@@ -216,3 +216,38 @@ tbody.addEventListener('click', (e) => {
 
   tr.classList.add('active');
 });
+
+tbody.addEventListener('dblclick', (e) => {
+  const td = e.target.closest('td');
+
+  if (!td) {
+    return;
+  }
+
+  const initialValue = td.textContent;
+
+  td.textContent = '';
+
+  const input = document.createElement('input');
+
+  input.classList.add('cell-input');
+  input.value = initialValue;
+  td.append(input);
+  input.focus();
+
+  function saveCell() {
+    if (input.value === '') {
+      td.textContent = initialValue;
+    } else {
+      td.textContent = input.value;
+    }
+  }
+
+  input.addEventListener('blur', saveCell);
+
+  input.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter') {
+      saveCell();
+    }
+  });
+});
